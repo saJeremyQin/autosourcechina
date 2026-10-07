@@ -1,0 +1,17 @@
+# .gitignore
+.DS_Store
+*.log
+uploads/
+.env
+
+#ignore wordpress core files and uploads
+wp-admin/
+wp-includes/
+wp-config.php
+wp-content/uploads/
+wp-content/upgrade
+wp-content/cache/
+
+#ignore third-party plugins and themes
+/wp-content/plugins/
+/wp-content/themes/
