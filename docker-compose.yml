@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   db:
@@ -23,21 +22,34 @@ services:
       - "6379:6379"
 
   wordpress:
-    image: wordpress:latest
+    image: wordpress:7.1.3-php8.2-fpm
     container_name: woo_app
     restart: always
     depends_on:
       - db
       - redis
-    ports:
-      - "8080:80"
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
     volumes:
+      - wp_html:/var/www/html
       - ./wp-content:/var/www/html/wp-content
+
+  nginx:
+    image: nginx:alpine
+    container_name: woo_nginx
+    restart: always
+    depends_on:
+      - wordpress
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - wp_html:/var/www/html:ro
+      - ./wp-content:/var/www/html/wp-content:ro
 
 volumes:
   db_data:
+  wp_html:
