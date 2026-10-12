@@ -9,7 +9,7 @@ on:
       - master
 
 permissions:
-  id-token: write # required for OIDC
+  id-token: write # required for OIDC, use GITHUB_OIDC_ROLE
   contents: read
 
 env:
