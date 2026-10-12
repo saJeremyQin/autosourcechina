@@ -1,0 +1,30 @@
+{
+  "name": "autosourcechina/woocommerce-site",
+  "description": "Plugins and themes for the WooCommerce site, installed at image build time.",
+  "type": "project",
+  "license": "proprietary",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://wpackagist.org",
+      "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
+    }
+  ],
+  "require": {
+    "composer/installers": "^2.3",
+    "wpackagist-plugin/woocommerce": "11.2.0",
+    "wpackagist-plugin/amazon-s3-and-cloudfront": "3.4.3"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
+  },
+  "extra": {
+    "installer-paths": {
+      "wp-content/plugins/{$name}/": ["type:wordpress-plugin"],
+      "wp-content/themes/{$name}/": ["type:wordpress-theme"],
+      "wp-content/mu-plugins/{$name}/": ["type:wordpress-muplugin"]
+    }
+  }
+}

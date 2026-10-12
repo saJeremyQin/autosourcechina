@@ -1,0 +1,22 @@
+.git
+.github
+.env
+.gitignore
+.DS_Store
+*.log
+
+# Local runtime data: never bake into the image
+wp-content/uploads
+wp-content/upgrade
+wp-content/cache
+
+# Installed by composer inside the build, not copied from the host
+wp-content/plugins
+wp-content/themes
+wp-content/mu-plugins
+vendor
+
+# Not needed in the image
+infra
+docker-compose.yml
+nginx/default.conf

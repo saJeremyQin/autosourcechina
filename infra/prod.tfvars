@@ -1,0 +1,35 @@
+environment         = "prod"
+low_cost_networking = true
+region              = "ap-southeast-2"
+app_name            = "autosourcechina"
+repo_name           = "autosourcechina"
+ecs_container_port  = 80
+vpc_cidr            = "10.0.0.0/16"
+public_subnets = [
+  {
+    name              = "public-a"
+    cidr_block        = "10.0.1.0/24"
+    availability_zone = "ap-southeast-2a"
+  },
+  {
+    name              = "public-b"
+    cidr_block        = "10.0.2.0/24"
+    availability_zone = "ap-southeast-2b"
+  }
+]
+
+private_subnets = [
+  {
+    name              = "private-a"
+    cidr_block        = "10.0.101.0/24"
+    availability_zone = "ap-southeast-2a"
+  },
+  {
+    name              = "private-b"
+    cidr_block        = "10.0.102.0/24"
+    availability_zone = "ap-southeast-2b"
+  }
+]
+nginx_image  = "621347135884.dkr.ecr.ap-southeast-2.amazonaws.com/autosourcechina-nginx:latest"
+app_image    = "621347135884.dkr.ecr.ap-southeast-2.amazonaws.com/autosourcechina:latest"
+media_bucket = "autosourcechina-media"

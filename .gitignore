@@ -15,3 +15,17 @@ wp-content/cache/
 #ignore third-party plugins and themes
 /wp-content/plugins/
 /wp-content/themes/
+# Keep our custom plugins and themes committed
+#!/wp-content/plugins/my-custom-plugin/
+#!/wp-content/themes/my-custom-theme/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfplan
+.envrc
+# Keep .terraform.lock.hcl committed
+vendor/
+infra/tfplan
