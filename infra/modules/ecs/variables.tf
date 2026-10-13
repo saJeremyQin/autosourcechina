@@ -33,6 +33,11 @@ variable "alb_sg_id" {
   type        = string
 }
 
+variable "certificate_arn" {
+  description = "ACM certificate ARN for the HTTPS ALB listener."
+  type        = string
+}
+
 variable "fargate_sg_id" {
   description = "Security group ID for the Fargate tasks."
   type        = string
@@ -75,6 +80,11 @@ variable "db_user" {
 
 variable "db_password_secret_arn" {
   description = "Secrets Manager secret ARN (JSON with a password key) for the DB password."
+  type        = string
+}
+
+variable "site_url" {
+  description = "Canonical HTTPS URL used by WordPress."
   type        = string
 }
 
@@ -137,4 +147,3 @@ variable "site_title" {
   type        = string
   default     = "AutoSourceChina"
 }
-

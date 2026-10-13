@@ -61,9 +61,11 @@ module "ecs" {
   fargate_sg_id      = module.networking.fargate_security_group_id
   assign_public_ip   = var.low_cost_networking
 
-  app_image      = var.app_image
-  nginx_image    = var.nginx_image
-  container_port = var.ecs_container_port
+  app_image       = var.app_image
+  nginx_image     = var.nginx_image
+  container_port  = var.ecs_container_port
+  certificate_arn = var.certificate_arn
+  site_url        = var.site_url
 
   media_bucket           = var.media_bucket
   media_cdn_domain       = module.media.cdn_domain
@@ -81,4 +83,16 @@ module "ecs" {
 output "alb_dns_name" {
   description = "Public DNS name of the ALB."
   value       = module.ecs.alb_dns_name
+}
+
+output "ecs_cluster_name" {
+  value = module.ecs.cluster_name
+}
+
+output "ecs_service_name" {
+  value = module.ecs.service_name
+}
+
+output "task_definition_arn" {
+  value = module.ecs.task_definition_arn
 }

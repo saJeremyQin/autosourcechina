@@ -30,9 +30,11 @@ private_subnets = [
     availability_zone = "ap-southeast-2b"
   }
 ]
-nginx_image  = "621347135884.dkr.ecr.ap-southeast-2.amazonaws.com/autosourcechina-nginx:latest"
-app_image    = "621347135884.dkr.ecr.ap-southeast-2.amazonaws.com/autosourcechina:latest"
-media_bucket = "autosourcechina-media"
+nginx_image     = "621347135884.dkr.ecr.ap-southeast-2.amazonaws.com/autosourcechina-nginx:latest"
+app_image       = "621347135884.dkr.ecr.ap-southeast-2.amazonaws.com/autosourcechina:latest"
+media_bucket    = "autosourcechina-media"
+certificate_arn = "arn:aws:acm:ap-southeast-2:621347135884:certificate/87a5e698-1a45-4385-95f9-a3f0b6632d73"
+site_url        = "https://autosourcechina.com"
 
 # WordPress 初始化与自动激活配置（留空或自定义）
 activate_plugins = "woocommerce amazon-s3-and-cloudfront"

@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "this" {
         { name = "WORDPRESS_DB_USER", value = var.db_user },
         { name = "WORDPRESS_DB_NAME", value = var.db_name },
         { name = "WORDPRESS_CONFIG_EXTRA", value = local.wordpress_config_extra },
-        { name = "WP_SITE_URL", value = "http://${aws_lb.this.dns_name}" },
+        { name = "WP_SITE_URL", value = var.site_url },
         { name = "WP_ADMIN_USER", value = "admin" },
         { name = "WP_ADMIN_EMAIL", value = var.admin_email },
         { name = "WP_SITE_TITLE", value = var.site_title },

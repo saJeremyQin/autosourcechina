@@ -62,6 +62,16 @@ variable "nginx_image" {
   type        = string
 }
 
+variable "certificate_arn" {
+  description = "ACM certificate ARN for the HTTPS ALB listener."
+  type        = string
+}
+
+variable "site_url" {
+  description = "Canonical HTTPS URL used by WordPress."
+  type        = string
+}
+
 variable "media_bucket" {
   description = "S3 bucket name for WordPress media."
   type        = string
@@ -90,4 +100,3 @@ variable "site_title" {
   type        = string
   default     = "AutoSourceChina"
 }
-

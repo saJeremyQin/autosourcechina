@@ -7,6 +7,11 @@ locals {
     define( 'DISALLOW_FILE_MODS', true );
     define( 'AUTOMATIC_UPDATER_DISABLED', true );
     define( 'WP_AUTO_UPDATE_CORE', false );
+    define( 'WP_HOME', '${var.site_url}' );
+    define( 'WP_SITEURL', '${var.site_url}' );
+    if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO'] ) {
+      $_SERVER['HTTPS'] = 'on';
+    }
 
     define( 'AS3CF_SETTINGS', serialize( array(
       'provider'               => 'aws',
