@@ -71,6 +71,11 @@ module "ecs" {
   db_name                = module.rds.db_name
   db_user                = module.rds.db_username
   db_password_secret_arn = module.rds.master_user_secret_arn
+
+  activate_plugins = var.activate_plugins
+  activate_theme   = var.activate_theme
+  admin_email      = var.admin_email
+  site_title       = var.site_title
 }
 
 output "alb_dns_name" {

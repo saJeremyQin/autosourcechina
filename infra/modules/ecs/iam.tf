@@ -53,7 +53,7 @@ resource "aws_iam_role_policy" "task_s3" {
 data "aws_iam_policy_document" "execution_secrets" {
   statement {
     actions   = ["secretsmanager:GetSecretValue"]
-    resources = [var.db_password_secret_arn, aws_secretsmanager_secret.wordpress_salts.arn]
+    resources = [var.db_password_secret_arn, aws_secretsmanager_secret.wordpress_salts.arn, aws_secretsmanager_secret.wp_admin.arn]
   }
 }
 

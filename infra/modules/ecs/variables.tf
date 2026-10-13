@@ -113,3 +113,28 @@ variable "health_check_path" {
   type        = string
   default     = "/"
 }
+
+variable "activate_plugins" {
+  description = "Space-separated list of plugins to activate on container startup."
+  type        = string
+  default     = "woocommerce amazon-s3-and-cloudfront"
+}
+
+variable "activate_theme" {
+  description = "Theme slug to activate on container startup (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "admin_email" {
+  description = "WordPress admin email address for initial site installation."
+  type        = string
+  default     = "admin@example.com"
+}
+
+variable "site_title" {
+  description = "WordPress site title for initial site installation."
+  type        = string
+  default     = "AutoSourceChina"
+}
+

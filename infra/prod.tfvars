@@ -33,3 +33,9 @@ private_subnets = [
 nginx_image  = "621347135884.dkr.ecr.ap-southeast-2.amazonaws.com/autosourcechina-nginx:latest"
 app_image    = "621347135884.dkr.ecr.ap-southeast-2.amazonaws.com/autosourcechina:latest"
 media_bucket = "autosourcechina-media"
+
+# WordPress 初始化与自动激活配置（留空或自定义）
+activate_plugins = "woocommerce amazon-s3-and-cloudfront"
+activate_theme   = ""
+admin_email      = "mooji.dev@gmail.com"
+site_title       = "AutoSourceChina"

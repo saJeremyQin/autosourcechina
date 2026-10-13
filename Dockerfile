@@ -25,10 +25,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         pdo_mysql \
         zip
 
-# Install PHP Redis extension
-RUN pecl install redis \
-    && docker-php-ext-enable redis
-
 RUN { \
         echo 'opcache.memory_consumption=128'; \
         echo 'opcache.interned_strings_buffer=8'; \
@@ -42,7 +38,16 @@ RUN { \
 COPY wp-content/ /usr/src/wordpress/wp-content/
 COPY --from=plugins --chown=www-data:www-data /build/wp-content/ /usr/src/wordpress/wp-content/
 
+# WP-CLI + first-boot provisioning (install + activate plugins)
+COPY --from=wordpress:cli /usr/local/bin/wp /usr/local/bin/wp
+COPY docker/entrypoint.sh /usr/local/bin/app-entrypoint.sh
+COPY docker/wp-bootstrap.sh /usr/local/bin/wp-bootstrap.sh
+RUN chmod +x /usr/local/bin/app-entrypoint.sh /usr/local/bin/wp-bootstrap.sh
+
 WORKDIR /var/www/html
+
+ENTRYPOINT ["app-entrypoint.sh"]
+CMD ["php-fpm"]
 
 # Stateless nginx image: static files are baked in from the app stage (same
 # WordPress version and wp-content), so no shared volume is needed. Uploads live in S3.

@@ -23,10 +23,26 @@ resource "random_password" "wordpress_salt" {
 resource "aws_secretsmanager_secret" "wordpress_salts" {
   name                    = "${local.name_prefix}/wordpress-salts"
   description             = "WordPress auth keys and salts"
-  recovery_window_in_days = 7
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "wordpress_salts" {
   secret_id     = aws_secretsmanager_secret.wordpress_salts.id
   secret_string = jsonencode({ for k, v in random_password.wordpress_salt : k => v.result })
+}
+
+resource "random_password" "wp_admin" {
+  length  = 24
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "wp_admin" {
+  name                    = "${local.name_prefix}/wordpress-admin"
+  description             = "Initial WordPress admin password (used by first-boot install)"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "wp_admin" {
+  secret_id     = aws_secretsmanager_secret.wp_admin.id
+  secret_string = jsonencode({ password = random_password.wp_admin.result })
 }

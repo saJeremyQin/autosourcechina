@@ -49,10 +49,19 @@ resource "aws_ecs_task_definition" "this" {
         { name = "WORDPRESS_DB_USER", value = var.db_user },
         { name = "WORDPRESS_DB_NAME", value = var.db_name },
         { name = "WORDPRESS_CONFIG_EXTRA", value = local.wordpress_config_extra },
+        { name = "WP_SITE_URL", value = "http://${aws_lb.this.dns_name}" },
+        { name = "WP_ADMIN_USER", value = "admin" },
+        { name = "WP_ADMIN_EMAIL", value = var.admin_email },
+        { name = "WP_SITE_TITLE", value = var.site_title },
+        { name = "WP_ACTIVATE_PLUGINS", value = var.activate_plugins },
+        { name = "WP_ACTIVATE_THEME", value = var.activate_theme },
       ]
 
       secrets = concat(
-        [{ name = "WORDPRESS_DB_PASSWORD", valueFrom = "${var.db_password_secret_arn}:password::" }],
+        [
+          { name = "WORDPRESS_DB_PASSWORD", valueFrom = "${var.db_password_secret_arn}:password::" },
+          { name = "WP_ADMIN_PASSWORD", valueFrom = "${aws_secretsmanager_secret.wp_admin.arn}:password::" },
+        ],
         [for n in local.wordpress_salt_names : {
           name      = "WORDPRESS_${n}"
           valueFrom = "${aws_secretsmanager_secret.wordpress_salts.arn}:${n}::"
