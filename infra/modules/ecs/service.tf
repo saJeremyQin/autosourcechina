@@ -19,6 +19,7 @@ resource "aws_ecs_service" "this" {
     container_port   = var.container_port
   }
 
+  # Enable deployment circuit breaker to automatically roll back failed deployments.
   deployment_circuit_breaker {
     enable   = true
     rollback = true
