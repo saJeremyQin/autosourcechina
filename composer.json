@@ -13,7 +13,8 @@
   "require": {
     "composer/installers": "^2.3",
     "wpackagist-plugin/woocommerce": "11.2.0",
-    "wpackagist-plugin/amazon-s3-and-cloudfront": "3.4.3"
+    "wpackagist-plugin/amazon-s3-and-cloudfront": "3.4.3",
+    "wpackagist-theme/blocksy": "2.1.59"
   },
   "config": {
     "allow-plugins": {

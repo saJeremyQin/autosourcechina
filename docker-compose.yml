@@ -33,7 +33,7 @@ services:
       WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
       WP_SITE_TITLE: ${WP_SITE_TITLE}
       WP_ACTIVATE_PLUGINS: ${WP_ACTIVATE_PLUGINS}
-      WP_ACTIVATE_THEME: ${WP_ACTIVATE_THEME}
+      WP_ACTIVATE_THEME: ${WP_ACTIVATE_THEME:-blocksy}
     volumes:
       - uploads:/var/www/html/wp-content/uploads
     # nginx 与本服务共用网络，因此由这里发布 nginx 的 80 端口

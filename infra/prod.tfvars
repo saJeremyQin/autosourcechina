@@ -38,6 +38,6 @@ site_url        = "https://autosourcechina.com"
 
 # WordPress 初始化与自动激活配置（留空或自定义）
 activate_plugins = "woocommerce amazon-s3-and-cloudfront"
-activate_theme   = ""
+activate_theme   = "blocksy"
 admin_email      = "mooji.dev@gmail.com"
 site_title       = "AutoSourceChina"
