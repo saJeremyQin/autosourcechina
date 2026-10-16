@@ -37,7 +37,7 @@ certificate_arn = "arn:aws:acm:ap-southeast-2:621347135884:certificate/87a5e698-
 site_url        = "https://autosourcechina.com"
 
 # WordPress 初始化与自动激活配置（留空或自定义）
-activate_plugins = "woocommerce amazon-s3-and-cloudfront"
+activate_plugins = "woocommerce amazon-s3-and-cloudfront blocksy-companion"
 activate_theme   = "blocksy"
 admin_email      = "mooji.dev@gmail.com"
 site_title       = "AutoSourceChina"

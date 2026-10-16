@@ -32,8 +32,8 @@ jobs:
   plan:
     name: Terraform plan
     runs-on: ubuntu-latest
-    outputs:
-      task_definition_changed: ${{ steps.plan-summary.outputs.task_definition_changed }}
+    # outputs:
+    #   task_definition_changed: ${{ steps.plan-summary.outputs.task_definition_changed }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -63,24 +63,24 @@ jobs:
         working-directory: infra
         run: terraform plan -var-file=prod.tfvars -out=tfplan
 
-      - name: Check for ECS task-definition changes
-        id: plan-summary
-        working-directory: infra
-        run: |
-          set -euo pipefail
+      # - name: Check for ECS task-definition changes
+      #   id: plan-summary
+      #   working-directory: infra
+      #   run: |
+      #     set -euo pipefail
 
-          terraform show -json tfplan > tfplan.json
-          changed=$(jq -r '
-            [
-              .resource_changes[]?
-              | select(.address == "module.ecs.aws_ecs_task_definition.this")
-              | .change.actions[]
-            ]
-            | any(. != "no-op")
-          ' tfplan.json)
+      #     terraform show -json tfplan > tfplan.json
+      #     changed=$(jq -r '
+      #       [
+      #         .resource_changes[]?
+      #         | select(.address == "module.ecs.aws_ecs_task_definition.this")
+      #         | .change.actions[]
+      #       ]
+      #       | any(. != "no-op")
+      #     ' tfplan.json)
 
-          echo "task_definition_changed=$changed" >> "$GITHUB_OUTPUT"
-          echo "ECS task definition changed: $changed"
+      #     echo "task_definition_changed=$changed" >> "$GITHUB_OUTPUT"
+      #     echo "ECS task definition changed: $changed"
 
       - name: Upload Terraform plan
         if: github.event_name != 'pull_request'
@@ -124,31 +124,31 @@ jobs:
         working-directory: infra
         run: terraform apply -auto-approve tfplan
 
-      - name: Update ECS service for task-definition changes
-        if: needs.plan.outputs.task_definition_changed == 'true'
-        working-directory: infra
-        env:
-          ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
-          ECS_SERVICE: ${{ vars.ECS_SERVICE }}
-        run: |
-          set -euo pipefail
+      # - name: Update ECS service for task-definition changes
+      #   if: needs.plan.outputs.task_definition_changed == 'true'
+      #   working-directory: infra
+      #   env:
+      #     ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+      #     ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+      #   run: |
+      #     set -euo pipefail
 
-          TASK_DEFINITION_ARN=$(terraform output -raw task_definition_arn)
-          echo "Deploying Terraform task definition: $TASK_DEFINITION_ARN"
+      #     TASK_DEFINITION_ARN=$(terraform output -raw task_definition_arn)
+      #     echo "Deploying Terraform task definition: $TASK_DEFINITION_ARN"
 
-          aws ecs update-service \
-            --cluster "$ECS_CLUSTER" \
-            --service "$ECS_SERVICE" \
-            --task-definition "$TASK_DEFINITION_ARN" \
-            --region "$AWS_REGION" \
-            > /dev/null
+      #     aws ecs update-service \
+      #       --cluster "$ECS_CLUSTER" \
+      #       --service "$ECS_SERVICE" \
+      #       --task-definition "$TASK_DEFINITION_ARN" \
+      #       --region "$AWS_REGION" \
+      #       > /dev/null
 
-          aws ecs wait services-stable \
-            --cluster "$ECS_CLUSTER" \
-            --services "$ECS_SERVICE" \
-            --region "$AWS_REGION" \
-            --cli-read-timeout 900 \
-            --cli-connect-timeout 60
+      #     aws ecs wait services-stable \
+      #       --cluster "$ECS_CLUSTER" \
+      #       --services "$ECS_SERVICE" \
+      #       --region "$AWS_REGION" \
+      #       --cli-read-timeout 900 \
+      #       --cli-connect-timeout 60
 
       - name: Show infrastructure outputs
         working-directory: infra
