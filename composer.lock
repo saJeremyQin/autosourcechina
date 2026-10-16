@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f880d7048ffe3703b640e8981692696d",
+    "content-hash": "2f019aac0698026b37244f3be8e9882e",
     "packages": [
         {
             "name": "composer/installers",
@@ -171,6 +171,24 @@
             "homepage": "https://wordpress.org/plugins/amazon-s3-and-cloudfront/"
         },
         {
+            "name": "wpackagist-plugin/blocksy-companion",
+            "version": "2.1.59",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/blocksy-companion/",
+                "reference": "tags/2.1.59"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/blocksy-companion.2.1.59.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/blocksy-companion/"
+        },
+        {
             "name": "wpackagist-plugin/woocommerce",
             "version": "11.2.0",
             "source": {
@@ -187,6 +205,24 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/woocommerce/"
+        },
+        {
+            "name": "wpackagist-theme/blocksy",
+            "version": "2.1.59",
+            "source": {
+                "type": "svn",
+                "url": "https://themes.svn.wordpress.org/blocksy/",
+                "reference": "2.1.59"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/theme/blocksy.2.1.59.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-theme",
+            "homepage": "https://wordpress.org/themes/blocksy/"
         }
     ],
     "packages-dev": [],
