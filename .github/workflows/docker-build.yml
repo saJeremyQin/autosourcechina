@@ -48,13 +48,42 @@ jobs:
           push: false
           tags: ${{ env.ECR_REPOSITORY }}:test
   
-  # JOB 2: Build and push Docker images on push to master
+  # JOB 2: Check whether this push includes infra changes
+  check-infra:
+    name: Check if push modified infrastructure
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      has_infra: ${{ steps.diff.outputs.has_infra }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Check changed files
+        id: diff
+        run: |
+          if git diff-tree --no-commit-id --name-only -r -m HEAD | grep -q '^infra/'; then
+            echo "has_infra=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Commit modified infra/. Skipping immediate push deployment; workflow_run will deploy after Terraform apply."
+          else
+            echo "has_infra=false" >> "$GITHUB_OUTPUT"
+            echo "No infra changes detected in this push. Proceeding with push deployment."
+          fi
+
+  # JOB 3: Build and push Docker images on push to master
   build-and-push:
     name: Build, Push and Deploy to Prod
-    # If triggered by workflow_run, only run if Terraform succeeded
+    needs: [check-infra]
+    # If triggered by workflow_run, only run if Terraform succeeded.
+    # If triggered by push, only run if the push did not modify infra/ files.
     if: |
-      github.event_name != 'pull_request' && 
-      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+      always() &&
+      !cancelled() &&
+      (
+        (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+        (github.event_name == 'push' && needs.check-infra.result == 'success' && needs.check-infra.outputs.has_infra == 'false')
+      )
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
