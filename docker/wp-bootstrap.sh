@@ -42,4 +42,10 @@ for p in ${WP_ACTIVATE_PLUGINS:-woocommerce amazon-s3-and-cloudfront blocksy-com
   $WP plugin activate "$p" || log "failed to activate $p"
 done
 [ -n "$WP_ACTIVATE_THEME" ] && $WP theme activate "$WP_ACTIVATE_THEME"
+
+# Elementor writes generated CSS to uploads/ by default, which nginx cannot see on
+# ECS (no shared volume). Embed it in the page instead.
+if $WP plugin is-active elementor; then
+  $WP option update elementor_css_print_method internal || log "failed to set Elementor CSS print method"
+fi
 log "done"

@@ -64,6 +64,8 @@ module "ecs" {
   app_image       = var.app_image
   nginx_image     = var.nginx_image
   container_port  = var.ecs_container_port
+  cpu             = var.ecs_cpu
+  memory          = var.ecs_memory
   certificate_arn = var.certificate_arn
   site_url        = var.site_url
 
