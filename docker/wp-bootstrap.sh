@@ -1,8 +1,15 @@
 #!/bin/sh
 # Idempotent first-boot provisioning: installs WordPress into an empty database and
 # activates the plugins/theme baked into the image. Safe to run on every task start.
-WP="wp --path=/var/www/html --allow-root"
+# Run WP-CLI as the PHP-FPM user: files it creates (e.g. WooCommerce's uploads
+# placeholders) must stay writable by WordPress.
+WP="runuser -u www-data -- wp --path=/var/www/html"
 log() { echo "[wp-bootstrap] $*"; }
+
+# A fresh uploads volume is created root-owned; WordPress writes media and
+# Elementor's generated CSS there.
+mkdir -p /var/www/html/wp-content/uploads
+chown www-data:www-data /var/www/html/wp-content/uploads
 
 db_ready() {
   php -r 'mysqli_report(MYSQLI_REPORT_OFF); $h = explode(":", getenv("WORDPRESS_DB_HOST") . ":3306"); exit(@mysqli_connect($h[0], getenv("WORDPRESS_DB_USER"), getenv("WORDPRESS_DB_PASSWORD"), getenv("WORDPRESS_DB_NAME"), (int) $h[1]) ? 0 : 1);'
@@ -31,7 +38,7 @@ if ! $WP core is-installed 2>/dev/null; then
 fi
 
 # DISALLOW_FILE_MODS does not affect WP-CLI activation.
-for p in ${WP_ACTIVATE_PLUGINS:-woocommerce amazon-s3-and-cloudfront}; do
+for p in ${WP_ACTIVATE_PLUGINS:-woocommerce amazon-s3-and-cloudfront blocksy-companion elementor wpforms-lite}; do
   $WP plugin activate "$p" || log "failed to activate $p"
 done
 [ -n "$WP_ACTIVATE_THEME" ] && $WP theme activate "$WP_ACTIVATE_THEME"

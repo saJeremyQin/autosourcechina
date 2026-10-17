@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba12825068ad359c8bb28ec4ca68a77b",
+    "content-hash": "9a8022fe748d558385301a8cf4fb6c1a",
     "packages": [
         {
             "name": "composer/installers",
@@ -189,6 +189,42 @@
             "homepage": "https://wordpress.org/plugins/blocksy-companion/"
         },
         {
+            "name": "wpackagist-plugin/elementor",
+            "version": "4.3.4",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/elementor/",
+                "reference": "tags/4.3.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/elementor.4.3.4.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/elementor/"
+        },
+        {
+            "name": "wpackagist-plugin/ht-slider-for-elementor",
+            "version": "1.7.10",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/ht-slider-for-elementor/",
+                "reference": "tags/1.7.10"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/ht-slider-for-elementor.1.7.10.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/ht-slider-for-elementor/"
+        },
+        {
             "name": "wpackagist-plugin/woocommerce",
             "version": "11.2.1",
             "source": {
@@ -205,6 +241,24 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/woocommerce/"
+        },
+        {
+            "name": "wpackagist-plugin/wpforms-lite",
+            "version": "2.0.2.2",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/wpforms-lite/",
+                "reference": "tags/2.0.2.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/wpforms-lite.2.0.2.2.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/wpforms-lite/"
         },
         {
             "name": "wpackagist-theme/blocksy",
