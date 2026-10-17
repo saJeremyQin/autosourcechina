@@ -15,7 +15,10 @@
     "wpackagist-plugin/woocommerce": "11.2.1",
     "wpackagist-plugin/amazon-s3-and-cloudfront": "3.4.3",
     "wpackagist-plugin/blocksy-companion": "2.1.59",
-    "wpackagist-theme/blocksy": "2.1.59"
+    "wpackagist-theme/blocksy": "2.1.59",
+    "wpackagist-plugin/elementor": "4.3.4",
+    "wpackagist-plugin/wpforms-lite": "^2.0",
+    "wpackagist-plugin/ht-slider-for-elementor": "1.7.10"
   },
   "config": {
     "allow-plugins": {
