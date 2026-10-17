@@ -30,6 +30,18 @@ variable "ecs_container_port" {
   default     = 80
 }
 
+variable "ecs_cpu" {
+  description = "Fargate task CPU units (shared by nginx and PHP-FPM)."
+  type        = number
+  default     = 256
+}
+
+variable "ecs_memory" {
+  description = "Fargate task memory in MiB (shared by nginx and PHP-FPM)."
+  type        = number
+  default     = 512
+}
+
 variable "vpc_cidr" {
   description = "CIDR block for the VPC."
   type        = string
