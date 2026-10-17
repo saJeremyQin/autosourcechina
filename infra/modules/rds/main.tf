@@ -31,8 +31,13 @@ resource "aws_db_subnet_group" "this" {
 resource "aws_db_instance" "this" {
   identifier = "${local.name_prefix}-mysql"
 
-  engine                = "mysql"
-  engine_version        = "8.0"
+  engine = "mysql"
+  # 8.0 left RDS standard support on 2026-07-31; staying on it bills Extended
+  # Support per vCPU-hour (~10x the cost of a db.t4g.micro). 8.4 is the LTS line.
+  engine_version              = "8.4"
+  allow_major_version_upgrade = true
+  apply_immediately           = true
+
   instance_class        = var.instance_class
   storage_type          = "gp3"
   allocated_storage     = var.allocated_storage
