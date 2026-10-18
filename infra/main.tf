@@ -1,20 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.6"
-    }
-  }
-}
-
-provider "aws" {
-  region = var.region
-}
-
 module "networking" {
   source = "./modules/networking"
 
@@ -80,21 +63,4 @@ module "ecs" {
   activate_theme   = var.activate_theme
   admin_email      = var.admin_email
   site_title       = var.site_title
-}
-
-output "alb_dns_name" {
-  description = "Public DNS name of the ALB."
-  value       = module.ecs.alb_dns_name
-}
-
-output "ecs_cluster_name" {
-  value = module.ecs.cluster_name
-}
-
-output "ecs_service_name" {
-  value = module.ecs.service_name
-}
-
-output "task_definition_arn" {
-  value = module.ecs.task_definition_arn
 }
