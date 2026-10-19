@@ -3,7 +3,14 @@ resource "aws_ecs_service" "this" {
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.this.arn
   desired_count   = var.desired_count
-  launch_type     = "FARGATE"
+
+  # Spot is ~70% cheaper; AWS may reclaim the task with 2 minutes' notice and ECS
+  # starts a replacement, so expect brief outages.
+  capacity_provider_strategy {
+    capacity_provider = var.fargate_spot ? "FARGATE_SPOT" : "FARGATE"
+    weight            = 1
+  }
+  force_new_deployment = true
 
   # With VPC endpoints, tasks run in private subnets. Without them, tasks run in
   # public subnets with a public IP; the security group still admits only the ALB.

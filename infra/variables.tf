@@ -42,6 +42,12 @@ variable "ecs_memory" {
   default     = 512
 }
 
+variable "ecs_fargate_spot" {
+  description = "Run tasks on Fargate Spot (cheaper, may be interrupted)."
+  type        = bool
+  default     = false
+}
+
 variable "vpc_cidr" {
   description = "CIDR block for the VPC."
   type        = string
