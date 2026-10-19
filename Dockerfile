@@ -33,8 +33,9 @@ RUN { \
         echo 'opcache.fast_shutdown=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-# WooCommerce migrations and starter-site imports exceed PHP's 128M default.
-RUN echo 'memory_limit=512M' > /usr/local/etc/php/conf.d/memory-limit.ini
+# WooCommerce migrations exceed PHP's 128M default. Sized for a 1 GiB task;
+# raise it (and ecs_memory) temporarily for large starter-site imports.
+RUN echo 'memory_limit=256M' > /usr/local/etc/php/conf.d/memory-limit.ini
 
 # The official image copies /usr/src/wordpress to /var/www/html at startup,
 # so project code must be added there to be included.

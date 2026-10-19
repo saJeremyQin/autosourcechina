@@ -4,8 +4,9 @@ region              = "ap-southeast-2"
 app_name            = "autosourcechina"
 repo_name           = "autosourcechina"
 ecs_container_port  = 80
-ecs_cpu             = 512
-ecs_memory          = 2048
+ecs_cpu             = 256
+ecs_memory          = 1024
+ecs_fargate_spot    = true
 vpc_cidr            = "10.0.0.0/16"
 public_subnets = [
   {

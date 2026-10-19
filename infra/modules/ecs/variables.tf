@@ -112,6 +112,12 @@ variable "memory" {
   default     = 512
 }
 
+variable "fargate_spot" {
+  description = "Run tasks on Fargate Spot instead of on-demand Fargate."
+  type        = bool
+  default     = false
+}
+
 variable "desired_count" {
   description = "Number of running tasks."
   type        = number
