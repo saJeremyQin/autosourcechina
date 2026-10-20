@@ -43,9 +43,13 @@ for p in ${WP_ACTIVATE_PLUGINS:-woocommerce amazon-s3-and-cloudfront blocksy-com
 done
 [ -n "$WP_ACTIVATE_THEME" ] && $WP theme activate "$WP_ACTIVATE_THEME"
 
-# Elementor writes generated CSS to uploads/ by default, which nginx cannot see on
-# ECS (no shared volume). Embed it in the page instead.
+# Per-page Elementor CSS is embedded in the page, so it never depends on files in
+# uploads/.
 if $WP plugin is-active elementor; then
   $WP option update elementor_css_print_method internal || log "failed to set Elementor CSS print method"
+  # Site-wide files (custom-frontend.min.css when a kit uses custom breakpoints)
+  # are still written to uploads/, which on ECS is a fresh volume per task.
+  # Clear Elementor's records so it regenerates them on the next request.
+  $WP elementor flush-css || log "failed to flush Elementor CSS"
 fi
 log "done"
