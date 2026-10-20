@@ -8,7 +8,14 @@ resource "aws_ecs_task_definition" "this" {
   task_role_arn            = aws_iam_role.task.arn
 
   # nginx and php-fpm share localhost (awsvpc). Static files are baked into the
-  # nginx image, so there is no shared volume; uploads live in S3.
+  # nginx image and media lives in S3, but WordPress still writes some files to
+  # uploads/ at runtime (Elementor's generated CSS, files the offloader skips).
+  # This task-scoped volume lets nginx serve them; it is emptied whenever the
+  # task is replaced, and wp-bootstrap.sh has Elementor regenerate its CSS.
+  volume {
+    name = "uploads"
+  }
+
   container_definitions = jsonencode([
     {
       name      = "nginx"
@@ -23,6 +30,12 @@ resource "aws_ecs_task_definition" "this" {
       dependsOn = [{
         containerName = "wordpress"
         condition     = "START"
+      }]
+
+      mountPoints = [{
+        sourceVolume  = "uploads"
+        containerPath = "/var/www/html/wp-content/uploads"
+        readOnly      = true
       }]
 
       logConfiguration = {
@@ -42,6 +55,12 @@ resource "aws_ecs_task_definition" "this" {
       portMappings = [{
         containerPort = 9000
         protocol      = "tcp"
+      }]
+
+      mountPoints = [{
+        sourceVolume  = "uploads"
+        containerPath = "/var/www/html/wp-content/uploads"
+        readOnly      = false
       }]
 
       environment = [

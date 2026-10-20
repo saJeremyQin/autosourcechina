@@ -54,7 +54,8 @@ ENTRYPOINT ["app-entrypoint.sh"]
 CMD ["php-fpm"]
 
 # Stateless nginx image: static files are baked in from the app stage (same
-# WordPress version and wp-content), so no shared volume is needed. Uploads live in S3.
+# WordPress version and wp-content). Media lives in S3; runtime files PHP writes to
+# uploads/ reach nginx through a volume shared within the ECS task.
 FROM nginx:alpine AS nginx
 
 COPY --from=app /usr/src/wordpress /var/www/html
