@@ -3,7 +3,12 @@ FROM composer:2 AS plugins
 # Plugins and themes are installed from composer.lock (wpackagist), not committed.
 WORKDIR /build
 COPY composer.json composer.lock ./
-RUN COMPOSER_HTTP_TIMEOUT=60 composer install --no-dev --no-interaction --no-progress --ignore-platform-reqs
+
+# Longer timeouts and fewer parallel downloads for slow links (e.g. the Pi).
+ENV COMPOSER_PROCESS_TIMEOUT=1200 \
+    COMPOSER_HTTP_TIMEOUT=1200 \
+    COMPOSER_MAX_PARALLEL_HTTP=2
+RUN composer install --no-dev --no-interaction --no-progress --ignore-platform-reqs
 
 FROM wordpress:7.1.3-php8.2-fpm AS app
 
