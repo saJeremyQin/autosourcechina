@@ -18,7 +18,8 @@
     "wpackagist-theme/blocksy": "2.1.59",
     "wpackagist-plugin/elementor": "4.3.4",
     "wpackagist-plugin/wpforms-lite": "^2.0",
-    "wpackagist-plugin/ht-slider-for-elementor": "1.7.10"
+    "wpackagist-plugin/ht-slider-for-elementor": "1.7.10",
+    "wpackagist-plugin/seo-by-rank-math": "1.0.280"
   },
   "config": {
     "allow-plugins": {
