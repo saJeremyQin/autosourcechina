@@ -42,7 +42,34 @@ resource "aws_lb_listener" "https" {
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
   certificate_arn   = var.certificate_arn
 
+  # Requests that don't name the site (scanners hitting the ALB's IP or DNS
+  # name) are answered here and never reach the task.
   default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Not found"
+      status_code  = "404"
+    }
+  }
+}
+
+locals {
+  site_host = regex("^https?://([^/:]+)", var.site_url)[0]
+}
+
+resource "aws_lb_listener_rule" "site" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 10
+
+  condition {
+    host_header {
+      values = [local.site_host, "www.${local.site_host}"]
+    }
+  }
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.this.arn
   }
