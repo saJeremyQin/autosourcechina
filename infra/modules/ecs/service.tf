@@ -37,5 +37,5 @@ resource "aws_ecs_service" "this" {
     ignore_changes = [task_definition]
   }
 
-  depends_on = [aws_lb_listener.http, aws_lb_listener.https]
+  depends_on = [aws_lb_listener.http, aws_lb_listener.https, aws_lb_listener_rule.site]
 }

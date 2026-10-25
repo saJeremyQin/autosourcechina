@@ -42,6 +42,15 @@ RUN { \
 # raise it (and ecs_memory) temporarily for large starter-site imports.
 RUN echo 'memory_limit=256M' > /usr/local/etc/php/conf.d/memory-limit.ini
 
+# Fail fast under overload instead of building a queue that takes minutes to
+# drain: kill any request still running after 120s (imports run in short AJAX
+# batches) and keep at most 64 connections waiting for a free worker.
+RUN { \
+        echo '[www]'; \
+        echo 'request_terminate_timeout = 120s'; \
+        echo 'listen.backlog = 64'; \
+    } > /usr/local/etc/php-fpm.d/zz-overload.conf
+
 # The official image copies /usr/src/wordpress to /var/www/html at startup,
 # so project code must be added there to be included.
 COPY wp-content/ /usr/src/wordpress/wp-content/
