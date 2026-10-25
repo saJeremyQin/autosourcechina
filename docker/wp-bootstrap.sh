@@ -6,6 +6,13 @@
 WP="runuser -u www-data -- wp --path=/var/www/html"
 log() { echo "[wp-bootstrap] $*"; }
 
+# The container reports healthy only once this file exists (see the wordpress
+# health check), and nginx starts only after that, so no visitor request runs
+# while the steps below are still changing the site.
+READY_FILE=/tmp/wp-bootstrap-ready
+rm -f "$READY_FILE"
+ready() { touch "$READY_FILE"; log "ready"; }
+
 # A fresh uploads volume is created root-owned; WordPress writes media and
 # Elementor's generated CSS there.
 mkdir -p /var/www/html/wp-content/uploads
@@ -25,6 +32,7 @@ done
 if ! $WP core is-installed 2>/dev/null; then
   if [ -z "$WP_ADMIN_PASSWORD" ] || [ -z "$WP_SITE_URL" ]; then
     log "WP_ADMIN_PASSWORD/WP_SITE_URL not set; skipping install"
+    ready
     exit 0
   fi
   log "installing WordPress"
@@ -47,9 +55,13 @@ done
 # uploads/.
 if $WP plugin is-active elementor; then
   $WP option update elementor_css_print_method internal || log "failed to set Elementor CSS print method"
-  # Site-wide files (custom-frontend.min.css when a kit uses custom breakpoints)
-  # are still written to uploads/, which on ECS is a fresh volume per task.
-  # Clear Elementor's records so it regenerates them on the next request.
+  # Site-wide files (custom-frontend.min.css and custom-widget-*.css when a kit
+  # uses custom breakpoints) are still written to uploads/, which on ECS is a
+  # fresh volume per task while Elementor's records of them live in the database.
+  # Clear the records, then build the files now rather than on a visitor's
+  # request.
   $WP elementor flush-css || log "failed to flush Elementor CSS"
+  $WP eval 'if ( \Elementor\Plugin::$instance->breakpoints->has_custom_breakpoints() ) { \Elementor\Core\Breakpoints\Manager::compile_stylesheet_templates(); }' \
+    || log "failed to build Elementor breakpoint CSS"
 fi
-log "done"
+ready

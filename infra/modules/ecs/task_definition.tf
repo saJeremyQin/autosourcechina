@@ -11,7 +11,8 @@ resource "aws_ecs_task_definition" "this" {
   # nginx image and media lives in S3, but WordPress still writes some files to
   # uploads/ at runtime (Elementor's generated CSS, files the offloader skips).
   # This task-scoped volume lets nginx serve them; it is emptied whenever the
-  # task is replaced, and wp-bootstrap.sh has Elementor regenerate its CSS.
+  # task is replaced, and wp-bootstrap.sh rebuilds Elementor's CSS before nginx
+  # starts.
   volume {
     name = "uploads"
   }
@@ -27,9 +28,11 @@ resource "aws_ecs_task_definition" "this" {
         protocol      = "tcp"
       }]
 
+      # Start (and so receive ALB traffic) only after wp-bootstrap.sh has
+      # finished: requests that race its Elementor CSS rebuild break the layout.
       dependsOn = [{
         containerName = "wordpress"
-        condition     = "START"
+        condition     = "HEALTHY"
       }]
 
       mountPoints = [{
@@ -62,6 +65,17 @@ resource "aws_ecs_task_definition" "this" {
         containerPath = "/var/www/html/wp-content/uploads"
         readOnly      = false
       }]
+
+      # Healthy once wp-bootstrap.sh has finished provisioning. startPeriod covers
+      # the database wait and plugin activation on a 0.25 vCPU task; a bootstrap
+      # that never finishes fails the task and the circuit breaker rolls back.
+      healthCheck = {
+        command     = ["CMD-SHELL", "test -f /tmp/wp-bootstrap-ready"]
+        interval    = 10
+        timeout     = 5
+        retries     = 3
+        startPeriod = 300
+      }
 
       environment = [
         { name = "WORDPRESS_DB_HOST", value = var.db_host },

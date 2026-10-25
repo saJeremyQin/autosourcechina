@@ -36,6 +36,13 @@ services:
       WP_ACTIVATE_THEME: ${WP_ACTIVATE_THEME:-blocksy}
     volumes:
       - uploads:/var/www/html/wp-content/uploads
+    # 与 ECS 一致：wp-bootstrap.sh 完成后才报告健康，nginx 随后才启动
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/wp-bootstrap-ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 300s
     # nginx 与本服务共用网络，因此由这里发布 nginx 的 80 端口
     ports:
       - "8080:80"
@@ -46,7 +53,8 @@ services:
       target: nginx
     image: autosourcechina-nginx:local
     depends_on:
-      - wordpress
+      wordpress:
+        condition: service_healthy
     # 模拟 ECS：nginx 和 PHP-FPM 共用网络，生产配置中的
     # 127.0.0.1:9000 因此也能在本地使用
     network_mode: "service:wordpress"
