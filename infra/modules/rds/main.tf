@@ -27,7 +27,7 @@ resource "random_password" "db" {
   length  = 32
   special = false
 }
-
+# RDS master password stored in Secrets Manager
 resource "aws_secretsmanager_secret" "db" {
   name                    = "${local.name_prefix}/db-master"
   description             = "RDS master credentials used by WordPress"
