@@ -15,7 +15,7 @@ output "db_username" {
   value = aws_db_instance.this.username
 }
 
-output "master_user_secret_arn" {
-  description = "Secrets Manager secret holding the generated master password (JSON: username, password)."
-  value       = aws_db_instance.this.master_user_secret[0].secret_arn
+output "db_password_secret_arn" {
+  description = "Secrets Manager secret holding the master password (JSON: username, password)."
+  value       = aws_secretsmanager_secret.db.arn
 }

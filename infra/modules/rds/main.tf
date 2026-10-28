@@ -21,6 +21,24 @@ resource "aws_vpc_security_group_ingress_rule" "mysql_from_fargate" {
   referenced_security_group_id = var.allowed_security_group_id
 }
 
+# Generated once and stored in state; it never changes unless this resource is
+# replaced, which also requires a new task to pick it up.
+resource "random_password" "db" {
+  length  = 32
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "db" {
+  name                    = "${local.name_prefix}/db-master"
+  description             = "RDS master credentials used by WordPress"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "db" {
+  secret_id     = aws_secretsmanager_secret.db.id
+  secret_string = jsonencode({ username = var.db_username, password = random_password.db.result })
+}
+
 resource "aws_db_subnet_group" "this" {
   name       = "${local.name_prefix}-db-subnets"
   subnet_ids = var.subnet_ids
@@ -46,8 +64,9 @@ resource "aws_db_instance" "this" {
 
   db_name  = var.db_name
   username = var.db_username
-  # RDS generates the password and stores it in Secrets Manager.
-  manage_master_user_password = true
+  # Not manage_master_user_password: RDS would rotate that password every 7 days,
+  # and running tasks only read it at start, so the site broke until the next deploy.
+  password = random_password.db.result
 
   db_subnet_group_name   = aws_db_subnet_group.this.name
   vpc_security_group_ids = [aws_security_group.db.id]
