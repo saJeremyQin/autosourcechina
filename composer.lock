@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33616a84ef0f6311ac8d93af518b9e92",
+    "content-hash": "d00b6729884642115066efdc0bfa2c8a",
     "packages": [
         {
             "name": "composer/installers",
@@ -154,15 +154,15 @@
         },
         {
             "name": "wpackagist-plugin/amazon-s3-and-cloudfront",
-            "version": "3.4.3",
+            "version": "3.4.4",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/amazon-s3-and-cloudfront/",
-                "reference": "tags/3.4.3"
+                "reference": "tags/3.4.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/amazon-s3-and-cloudfront.3.4.3.zip"
+                "url": "https://downloads.wordpress.org/plugin/amazon-s3-and-cloudfront.3.4.4.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -172,15 +172,15 @@
         },
         {
             "name": "wpackagist-plugin/blocksy-companion",
-            "version": "2.1.59",
+            "version": "2.1.61",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/blocksy-companion/",
-                "reference": "tags/2.1.59"
+                "reference": "tags/2.1.61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/blocksy-companion.2.1.59.zip"
+                "url": "https://downloads.wordpress.org/plugin/blocksy-companion.2.1.61.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -190,15 +190,15 @@
         },
         {
             "name": "wpackagist-plugin/elementor",
-            "version": "4.3.4",
+            "version": "4.3.5",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/elementor/",
-                "reference": "tags/4.3.4"
+                "reference": "tags/4.3.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/elementor.4.3.4.zip"
+                "url": "https://downloads.wordpress.org/plugin/elementor.4.3.5.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -208,15 +208,15 @@
         },
         {
             "name": "wpackagist-plugin/ht-slider-for-elementor",
-            "version": "1.7.10",
+            "version": "1.7.11",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/ht-slider-for-elementor/",
-                "reference": "tags/1.7.10"
+                "reference": "tags/1.7.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/ht-slider-for-elementor.1.7.10.zip"
+                "url": "https://downloads.wordpress.org/plugin/ht-slider-for-elementor.1.7.11.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -262,15 +262,15 @@
         },
         {
             "name": "wpackagist-plugin/wpforms-lite",
-            "version": "2.0.2.2",
+            "version": "2.0.3.1",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/wpforms-lite/",
-                "reference": "tags/2.0.2.2"
+                "reference": "tags/2.0.3.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/wpforms-lite.2.0.2.2.zip"
+                "url": "https://downloads.wordpress.org/plugin/wpforms-lite.2.0.3.1.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -280,15 +280,15 @@
         },
         {
             "name": "wpackagist-theme/blocksy",
-            "version": "2.1.59",
+            "version": "2.1.61",
             "source": {
                 "type": "svn",
                 "url": "https://themes.svn.wordpress.org/blocksy/",
-                "reference": "2.1.59"
+                "reference": "2.1.61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/theme/blocksy.2.1.59.zip"
+                "url": "https://downloads.wordpress.org/theme/blocksy.2.1.61.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
