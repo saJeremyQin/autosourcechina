@@ -10,7 +10,7 @@ ENV COMPOSER_PROCESS_TIMEOUT=1200 \
     COMPOSER_MAX_PARALLEL_HTTP=2
 RUN composer install --no-dev --no-interaction --no-progress --ignore-platform-reqs
 
-FROM wordpress:7.1.3-php8.2-fpm AS app
+FROM wordpress:7.1.4-php8.2-fpm AS app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -55,6 +55,11 @@ RUN { \
 # so project code must be added there to be included.
 COPY wp-content/ /usr/src/wordpress/wp-content/
 COPY --from=plugins --chown=www-data:www-data /build/wp-content/ /usr/src/wordpress/wp-content/
+
+# Drop the plugins bundled with the official image; DISALLOW_FILE_MODS stops
+# deleting them from wp-admin, and their files would still be served.
+RUN rm -rf /usr/src/wordpress/wp-content/plugins/akismet \
+    /usr/src/wordpress/wp-content/plugins/hello.php
 
 # WP-CLI + first-boot provisioning (install + activate plugins)
 COPY --from=wordpress:cli /usr/local/bin/wp /usr/local/bin/wp
