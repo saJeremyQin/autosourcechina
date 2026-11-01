@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d00b6729884642115066efdc0bfa2c8a",
+    "content-hash": "427379571ac698e45915cd21b373c5f6",
     "packages": [
         {
             "name": "composer/installers",
@@ -189,6 +189,24 @@
             "homepage": "https://wordpress.org/plugins/blocksy-companion/"
         },
         {
+            "name": "wpackagist-plugin/click-to-chat-for-whatsapp",
+            "version": "4.46",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/click-to-chat-for-whatsapp/",
+                "reference": "tags/4.46"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/click-to-chat-for-whatsapp.4.46.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/click-to-chat-for-whatsapp/"
+        },
+        {
             "name": "wpackagist-plugin/elementor",
             "version": "4.3.5",
             "source": {
@@ -305,5 +323,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
