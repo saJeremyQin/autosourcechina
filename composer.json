@@ -19,7 +19,8 @@
     "wpackagist-plugin/elementor": "4.3.5",
     "wpackagist-plugin/wpforms-lite": "2.0.3.1",
     "wpackagist-plugin/ht-slider-for-elementor": "1.7.11",
-    "wpackagist-plugin/seo-by-rank-math": "1.0.280"
+    "wpackagist-plugin/seo-by-rank-math": "1.0.280",
+    "wpackagist-plugin/click-to-chat-for-whatsapp": "4.46"
   },
   "config": {
     "allow-plugins": {
