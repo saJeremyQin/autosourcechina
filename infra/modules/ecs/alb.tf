@@ -74,3 +74,22 @@ resource "aws_lb_listener_rule" "site" {
     target_group_arn = aws_lb_target_group.this.arn
   }
 }
+
+# Plain HTTP for the site's hosts goes to nginx, which redirects to
+# https://<bare domain> in one hop; an ALB redirect would add ":443" and leave
+# www for a second redirect. Other hosts still get the listener's redirect.
+resource "aws_lb_listener_rule" "site_http" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 10
+
+  condition {
+    host_header {
+      values = [local.site_host, "www.${local.site_host}"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.this.arn
+  }
+}
