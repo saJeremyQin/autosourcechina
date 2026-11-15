@@ -24,6 +24,13 @@ final class ASC_QP_Ai {
 	const TIMEOUT     = 45;
 	const MAX_RETRIES = 2;
 
+	// Total seconds for all attempts together. nginx and the AWS load balancer
+	// give up after 60 seconds, so we must answer before that, even when retrying.
+	const TIME_BUDGET = 50;
+
+	// Placeholder Terraform puts in Secrets Manager until the real key is set.
+	const KEY_PLACEHOLDER = 'not-set';
+
 	public static function is_configured(): bool {
 		return '' !== self::api_key();
 	}
@@ -32,7 +39,8 @@ final class ASC_QP_Ai {
 	 * The key comes from the server environment only: never the database, never the browser.
 	 */
 	private static function api_key(): string {
-		return trim( (string) getenv( 'ANTHROPIC_API_KEY' ) );
+		$key = trim( (string) getenv( 'ANTHROPIC_API_KEY' ) );
+		return self::KEY_PLACEHOLDER === $key ? '' : $key;
 	}
 
 	/**
@@ -195,13 +203,14 @@ PROMPT;
 	// ---------------------------------------------------------------------
 
 	/**
-	 * POST to the Messages API, retrying on rate limits and server errors.
+	 * POST to the Messages API, retrying on rate limits and server errors,
+	 * all within TIME_BUDGET seconds.
 	 *
 	 * @return array|WP_Error Decoded response body.
 	 */
 	private static function request( array $body ) {
-		$args = array(
-			'timeout' => self::TIMEOUT,
+		$deadline = microtime( true ) + self::TIME_BUDGET;
+		$args     = array(
 			'headers' => array(
 				'x-api-key'         => self::api_key(),
 				'anthropic-version' => self::API_VERSION,
@@ -212,10 +221,12 @@ PROMPT;
 		);
 
 		for ( $attempt = 0; ; $attempt++ ) {
-			$response = wp_remote_post( self::ENDPOINT, $args );
+			// Each attempt only gets the time that is left (at most TIMEOUT).
+			$args['timeout'] = min( self::TIMEOUT, $deadline - microtime( true ) );
+			$response        = wp_remote_post( self::ENDPOINT, $args );
 
 			// Network problem or timeout: no HTTP status at all. Not retried,
-			// a second 45-second wait would outlast the web server's timeout.
+			// a second long wait would outlast the web server's timeout.
 			if ( is_wp_error( $response ) ) {
 				return new WP_Error( 'asc_qp_ai_network', 'Could not reach the Claude API: ' . $response->get_error_message(), array( 'status' => 502 ) );
 			}
@@ -233,7 +244,13 @@ PROMPT;
 
 			// Wait as long as the API asks (retry-after header), at most 10 seconds.
 			$wait = (int) wp_remote_retrieve_header( $response, 'retry-after' );
-			sleep( min( 10, max( 1, $wait ?: 2 ** ( $attempt + 1 ) ) ) );
+			$wait = min( 10, max( 1, $wait ?: 2 ** ( $attempt + 1 ) ) );
+
+			// Give up if the wait plus a useful attempt (~15s) no longer fits.
+			if ( microtime( true ) + $wait + 15 > $deadline ) {
+				return self::http_error( $code, $json );
+			}
+			sleep( $wait );
 		}
 	}
 

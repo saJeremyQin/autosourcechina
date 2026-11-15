@@ -46,3 +46,22 @@ resource "aws_secretsmanager_secret_version" "wp_admin" {
   secret_id     = aws_secretsmanager_secret.wp_admin.id
   secret_string = jsonencode({ password = random_password.wp_admin.result })
 }
+
+# Claude API key for the ASC Quick Publish "Generate with AI" button.
+# Terraform only creates the secret with a placeholder; the real key is set by
+# hand (console or CLI), so it never appears in Git or in the Terraform state.
+# ignore_changes stops Terraform from overwriting the real key on later applies.
+resource "aws_secretsmanager_secret" "anthropic_api_key" {
+  name                    = "${local.name_prefix}/anthropic-api-key"
+  description             = "Claude API key (plain string) for the ASC Quick Publish plugin"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "anthropic_api_key" {
+  secret_id     = aws_secretsmanager_secret.anthropic_api_key.id
+  secret_string = "not-set"
+
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
+}

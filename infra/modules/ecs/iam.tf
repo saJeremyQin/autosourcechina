@@ -52,8 +52,13 @@ resource "aws_iam_role_policy" "task_s3" {
 # Execution role reads the DB password from Secrets Manager when the task starts.
 data "aws_iam_policy_document" "execution_secrets" {
   statement {
-    actions   = ["secretsmanager:GetSecretValue"]
-    resources = [var.db_password_secret_arn, aws_secretsmanager_secret.wordpress_salts.arn, aws_secretsmanager_secret.wp_admin.arn]
+    actions = ["secretsmanager:GetSecretValue"]
+    resources = [
+      var.db_password_secret_arn,
+      aws_secretsmanager_secret.wordpress_salts.arn,
+      aws_secretsmanager_secret.wp_admin.arn,
+      aws_secretsmanager_secret.anthropic_api_key.arn,
+    ]
   }
 }
 
