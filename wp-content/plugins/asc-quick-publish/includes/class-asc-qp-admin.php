@@ -48,8 +48,9 @@ final class ASC_QP_Admin {
 			: array();
 
 		$config = array(
-			'endpoint' => '/' . ASC_QP_Rest::NAMESPACE . '/products',
-			'models'   => is_array( $models ) ? array_values( $models ) : array(),
+			'endpoint'         => '/' . ASC_QP_Rest::NAMESPACE . '/products',
+			'generateEndpoint' => '/' . ASC_QP_Rest::NAMESPACE . '/generate',
+			'models'           => is_array( $models ) ? array_values( $models ) : array(),
 		);
 		wp_add_inline_script( 'asc-qp-admin', 'window.ascQp = ' . wp_json_encode( $config ) . ';', 'before' );
 	}
@@ -110,6 +111,13 @@ final class ASC_QP_Admin {
 						<td>
 							<input type="text" id="asc-qp-includes" name="includes" class="large-text" maxlength="300" placeholder="Rear bumper cover shell (without rear clearance sonar / parking aid sensor cutouts)">
 							<p class="description">Optional. Used in the short description and the specifications table.</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="asc-qp-extra-facts">Extra facts for AI</label></th>
+						<td>
+							<textarea id="asc-qp-extra-facts" name="extra_facts" class="large-text" rows="3" maxlength="1000" placeholder="without parking sensors; new parts primed/unpainted; lower diffuser not included"></textarea>
+							<p class="description">Optional. Only sent to the AI. It may only use these facts, so list anything the features should mention.</p>
 						</td>
 					</tr>
 				</table>
@@ -193,6 +201,41 @@ final class ASC_QP_Admin {
 							<div class="asc-qp-thumbs" id="asc-qp-gallery-preview"></div>
 							<button type="button" class="button" id="asc-qp-gallery-btn">Choose gallery images</button>
 						</td>
+					</tr>
+				</table>
+
+				<h2>Description copy</h2>
+				<p class="description">Optional. Fill these by hand or with AI, then edit freely. Empty fields fall back to the standard template.</p>
+				<p>
+					<button type="button" class="button" id="asc-qp-generate" <?php disabled( ! ASC_QP_Ai::is_configured() ); ?>>Generate with AI</button>
+					<span class="spinner" id="asc-qp-generate-spinner"></span>
+					<span class="description" id="asc-qp-generate-status">
+						<?php echo ASC_QP_Ai::is_configured() ? '' : 'AI is off: set ANTHROPIC_API_KEY on the server to enable it.'; ?>
+					</span>
+				</p>
+				<table class="form-table asc-qp-copy" role="presentation">
+					<tr>
+						<th scope="row"><label for="asc-qp-intro">Intro paragraph</label></th>
+						<td><textarea id="asc-qp-intro" name="copy_intro" class="large-text" rows="3"></textarea></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="asc-qp-features">Key features</label></th>
+						<td>
+							<textarea id="asc-qp-features" name="copy_features" class="large-text" rows="6" placeholder="Exact Factory Fitment: Engineered to match the original body contours."></textarea>
+							<p class="description">One per line, as <code>Title: sentence</code>.</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="asc-qp-alt-names">Alternate names</label></th>
+						<td><input type="text" id="asc-qp-alt-names" name="copy_alternate_names" class="large-text" placeholder="Rear Bumper Cover, Rear Bumper Fascia"><p class="description">Comma-separated.</p></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="asc-qp-placement">Placement on vehicle</label></th>
+						<td><input type="text" id="asc-qp-placement" name="copy_placement" class="regular-text" placeholder="Rear (Upper)"></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="asc-qp-sold-separately">Sold separately note</label></th>
+						<td><input type="text" id="asc-qp-sold-separately" name="copy_sold_separately" class="large-text" placeholder="Lower rear diffuser, reflectors and mounting brackets sold separately."></td>
 					</tr>
 				</table>
 

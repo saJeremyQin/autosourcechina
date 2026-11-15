@@ -187,8 +187,71 @@
 			height: form.height.value.trim(),
 			image_id: state.imageId,
 			gallery_ids: state.galleryIds,
+			extra_facts: form.extra_facts.value.trim(),
+			copy: copyPayload(),
 		};
 	}
+
+	// "Title: sentence" per line → [ { title, text } ].
+	function copyPayload() {
+		const features = form.copy_features.value
+			.split( '\n' )
+			.map( ( line ) => line.trim() )
+			.filter( Boolean )
+			.map( ( line ) => {
+				const i = line.indexOf( ':' );
+				return i > 0
+					? { title: line.slice( 0, i ).trim(), text: line.slice( i + 1 ).trim() }
+					: { title: '', text: line };
+			} );
+		return {
+			intro: form.copy_intro.value.trim(),
+			features,
+			alternate_names: form.copy_alternate_names.value.split( ',' ).map( ( s ) => s.trim() ).filter( Boolean ),
+			placement: form.copy_placement.value.trim(),
+			sold_separately: form.copy_sold_separately.value.trim(),
+		};
+	}
+
+	function errorHtml( error ) {
+		const messages = error.additional_errors
+			? [ error.message, ...error.additional_errors.map( ( e ) => e.message ) ]
+			: [ error.message || 'Something went wrong.' ];
+		return `<ul>${ messages.map( ( m ) => `<li>${ escapeHtml( m ) }</li>` ).join( '' ) }</ul>`;
+	}
+
+	// ----- Generate with AI ---------------------------------------------
+
+	const generateBtn = $( '#asc-qp-generate' );
+	const generateSpinner = $( '#asc-qp-generate-spinner' );
+	const generateStatus = $( '#asc-qp-generate-status' );
+	const copyFields = [ 'copy_intro', 'copy_features', 'copy_alternate_names', 'copy_placement', 'copy_sold_separately' ];
+
+	generateBtn.addEventListener( 'click', async () => {
+		const hasCopy = copyFields.some( ( name ) => form[ name ].value.trim() );
+		if ( hasCopy && ! window.confirm( 'Replace the current description copy with a new AI version?' ) ) {
+			return;
+		}
+		generateBtn.disabled = true;
+		generateSpinner.classList.add( 'is-active' );
+		generateStatus.textContent = 'Writing… this usually takes 10–20 seconds.';
+		notice.hidden = true;
+		try {
+			const r = await wp.apiFetch( { path: ascQp.generateEndpoint, method: 'POST', data: payload() } );
+			form.copy_intro.value = r.intro;
+			form.copy_features.value = r.features.map( ( f ) => `${ f.title }: ${ f.text }` ).join( '\n' );
+			form.copy_alternate_names.value = r.alternate_names.join( ', ' );
+			form.copy_placement.value = r.placement;
+			form.copy_sold_separately.value = r.sold_separately;
+			generateStatus.textContent = `Done: ${ r.usage.input_tokens } + ${ r.usage.output_tokens } tokens ≈ US$${ Number( r.usage.cost_usd ).toFixed( 3 ) }. Review and edit before creating the draft.`;
+		} catch ( error ) {
+			generateStatus.textContent = '';
+			showNotice( 'error', errorHtml( error ) );
+		} finally {
+			generateBtn.disabled = false;
+			generateSpinner.classList.remove( 'is-active' );
+		}
+	} );
 
 	form.addEventListener( 'submit', async ( event ) => {
 		event.preventDefault();
@@ -203,10 +266,7 @@
 			}
 			showNotice( warnings.length ? 'warning' : 'success', html );
 		} catch ( error ) {
-			const messages = error.additional_errors
-				? [ error.message, ...error.additional_errors.map( ( e ) => e.message ) ]
-				: [ error.message || 'Something went wrong.' ];
-			let html = `<ul>${ messages.map( ( m ) => `<li>${ escapeHtml( m ) }</li>` ).join( '' ) }</ul>`;
+			let html = errorHtml( error );
 			if ( error.data && error.data.edit_url ) {
 				html += `<p><a href="${ escapeHtml( error.data.edit_url ) }" target="_blank" rel="noopener">Open the existing product</a></p>`;
 			}
@@ -227,6 +287,9 @@
 		$( '#asc-qp-image-preview' ).replaceChildren();
 		$( '#asc-qp-gallery-preview' ).replaceChildren();
 		notice.hidden = true;
+		if ( ! generateBtn.disabled ) {
+			generateStatus.textContent = '';
+		}
 		update();
 	} );
 

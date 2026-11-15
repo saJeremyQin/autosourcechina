@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       ASC Quick Publish
  * Description:       One-form publishing for auto parts: builds a draft variable product with fitment attributes, condition variations and descriptions.
- * Version:           0.2.0
+ * Version:           0.3.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  woocommerce
@@ -12,13 +12,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ASC_QP_VERSION', '0.2.0' );
+define( 'ASC_QP_VERSION', '0.3.0' );
 define( 'ASC_QP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASC_QP_URL', plugin_dir_url( __FILE__ ) );
 
 require_once ASC_QP_DIR . 'includes/class-asc-qp-config.php';
 require_once ASC_QP_DIR . 'includes/class-asc-qp-builder.php';
 require_once ASC_QP_DIR . 'includes/class-asc-qp-seo.php';
+require_once ASC_QP_DIR . 'includes/class-asc-qp-ai.php';
 require_once ASC_QP_DIR . 'includes/class-asc-qp-rest.php';
 require_once ASC_QP_DIR . 'includes/class-asc-qp-admin.php';
 

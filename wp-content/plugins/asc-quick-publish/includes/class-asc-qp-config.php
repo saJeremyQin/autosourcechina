@@ -36,8 +36,8 @@ final class ASC_QP_Config {
 
 	/**
 	 * Variation conditions, in the order the variations are created.
-	 * slug/name: the Part Condition term. suffix: appended to the OE number for
-	 * the variation SKU. label: wording used in descriptions.
+	 * slug/name: the Part Condition term, also the wording used in descriptions.
+	 * suffix: appended to the OE number for the variation SKU.
 	 */
 	public static function conditions(): array {
 		return array(
@@ -45,19 +45,16 @@ final class ASC_QP_Config {
 				'slug'   => 'used-genuine',
 				'name'   => 'Used Genuine',
 				'suffix' => 'UG',
-				'label'  => 'Inspected Used OEM',
 			),
 			'ng' => array(
 				'slug'   => 'new-genuine',
 				'name'   => 'New Genuine',
 				'suffix' => 'NG',
-				'label'  => 'New Genuine OEM',
 			),
 			'am' => array(
 				'slug'   => 'aftermarket',
 				'name'   => 'Aftermarket',
 				'suffix' => 'AM',
-				'label'  => 'Premium Aftermarket',
 			),
 		);
 	}

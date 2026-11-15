@@ -101,10 +101,39 @@ final class ASC_QP_Builder {
 			'dimensions'    => $dimensions,
 			'image_id'      => $image_id,
 			'gallery_ids'   => $gallery_ids,
+			'copy'          => self::validate_copy( is_array( $in['copy'] ?? null ) ? $in['copy'] : array() ),
 		);
 	}
 
-	private static function validate_fitment( array $rows, WP_Error $err ): array {
+	/**
+	 * The optional AI copy, as reviewed and edited in the form. All empty means
+	 * the plain template is used.
+	 */
+	private static function validate_copy( array $in ): array {
+		$features = array();
+		foreach ( array_slice( is_array( $in['features'] ?? null ) ? $in['features'] : array(), 0, 8 ) as $feature ) {
+			$title = is_array( $feature ) ? sanitize_text_field( $feature['title'] ?? '' ) : '';
+			$text  = is_array( $feature ) ? sanitize_text_field( $feature['text'] ?? '' ) : '';
+			if ( '' !== $title || '' !== $text ) {
+				$features[] = array(
+					'title' => $title,
+					'text'  => $text,
+				);
+			}
+		}
+
+		$names = is_array( $in['alternate_names'] ?? null ) ? $in['alternate_names'] : array();
+
+		return array(
+			'intro'           => mb_substr( sanitize_textarea_field( $in['intro'] ?? '' ), 0, 1000 ),
+			'features'        => $features,
+			'alternate_names' => array_values( array_filter( array_map( 'sanitize_text_field', array_slice( $names, 0, 8 ) ) ) ),
+			'placement'       => mb_substr( sanitize_text_field( $in['placement'] ?? '' ), 0, 60 ),
+			'sold_separately' => mb_substr( sanitize_text_field( $in['sold_separately'] ?? '' ), 0, 300 ),
+		);
+	}
+
+	public static function validate_fitment( array $rows, WP_Error $err ): array {
 		$max_year = (int) gmdate( 'Y' ) + 2;
 		$fitment  = array();
 		$invalid  = false;
@@ -410,7 +439,7 @@ final class ASC_QP_Builder {
 
 	private static function condition_labels( array $d ): array {
 		$conditions = ASC_QP_Config::conditions();
-		return array_map( static fn( $key ) => $conditions[ $key ]['label'], array_keys( $d['prices'] ) );
+		return array_map( static fn( $key ) => $conditions[ $key ]['name'], array_keys( $d['prices'] ) );
 	}
 
 	/**
@@ -468,20 +497,38 @@ final class ASC_QP_Builder {
 			esc_html( $d['part_name'] ),
 			esc_html( $d['oe'] )
 		);
-		$html .= sprintf(
-			"<p>Replacement %s for %s %s (%s). Available in %s options.</p>\n",
-			esc_html( strtolower( $d['part_name'] ) ),
-			esc_html( $d['make'] ),
-			esc_html( self::join_human( $models, ' and ' ) ),
-			esc_html( self::year_range( $d, '–' ) ),
-			esc_html( self::join_human( self::condition_labels( $d ), ' and ' ) )
-		);
+		$copy = $d['copy'];
+
+		if ( '' !== $copy['intro'] ) {
+			$html .= '<p>' . esc_html( $copy['intro'] ) . "</p>\n";
+		} else {
+			$html .= sprintf(
+				"<p>Replacement %s for %s %s (%s). Available in %s options.</p>\n",
+				esc_html( strtolower( $d['part_name'] ) ),
+				esc_html( $d['make'] ),
+				esc_html( self::join_human( $models, ' and ' ) ),
+				esc_html( self::year_range( $d, '–' ) ),
+				esc_html( self::join_human( self::condition_labels( $d ), ' and ' ) )
+			);
+		}
+
+		if ( $copy['features'] ) {
+			$html .= "<h2>Key Features &amp; Highlights</h2>\n<ul>\n";
+			foreach ( $copy['features'] as $feature ) {
+				$html .= '' !== $feature['title']
+					? sprintf( "<li><strong>%s:</strong> %s</li>\n", esc_html( $feature['title'] ), esc_html( $feature['text'] ) )
+					: sprintf( "<li>%s</li>\n", esc_html( $feature['text'] ) );
+			}
+			$html .= "</ul>\n";
+		}
 
 		$specs = array(
-			'Part Number'                  => $oe_compact !== $d['oe'] ? $d['oe'] . ' / ' . $oe_compact : $d['oe'],
-			'Partslink / Alternate Number' => $d['partslink'],
-			'Available Conditions'         => implode( ' / ', self::condition_labels( $d ) ),
-			'Options &amp; Notes'          => $d['includes'],
+			'Part Number'                    => $oe_compact !== $d['oe'] ? $d['oe'] . ' / ' . $oe_compact : $d['oe'],
+			'Partslink / Alternate Number'   => $d['partslink'],
+			'Alternate / Superseded Names'   => implode( ', ', $copy['alternate_names'] ),
+			'Available Conditions'           => implode( ' / ', self::condition_labels( $d ) ),
+			'Placement on Vehicle'           => $copy['placement'],
+			'Options &amp; Notes'            => $d['includes'],
 		);
 		$html .= "<h2>Product Specifications</h2>\n<table>\n<tbody>\n";
 		foreach ( $specs as $label => $value ) {
@@ -503,7 +550,8 @@ final class ASC_QP_Builder {
 			);
 		}
 		$html .= "</ul>\n";
-		$html .= "<p>(Note: Always verify your vehicle's VIN prior to purchase to confirm exact trim and option package fitment.)</p>";
+		$sold_separately = '' !== $copy['sold_separately'] ? rtrim( $copy['sold_separately'], '. ' ) . '. ' : '';
+		$html           .= '<p>(Note: ' . esc_html( $sold_separately ) . "Always verify your vehicle's VIN prior to purchase to confirm exact trim and option package fitment.)</p>";
 
 		return $html;
 	}
