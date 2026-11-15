@@ -196,10 +196,12 @@
 		spinner.classList.add( 'is-active' );
 		try {
 			const result = await wp.apiFetch( { path: ascQp.endpoint, method: 'POST', data: payload() } );
-			showNotice(
-				'success',
-				`<p>Draft created: <strong>${ escapeHtml( result.title ) }</strong> — <a href="${ escapeHtml( result.edit_url ) }" target="_blank" rel="noopener">review and publish</a></p>`
-			);
+			const warnings = result.warnings || [];
+			let html = `<p>Draft created: <strong>${ escapeHtml( result.title ) }</strong> — <a href="${ escapeHtml( result.edit_url ) }" target="_blank" rel="noopener">review and publish</a></p>`;
+			if ( warnings.length ) {
+				html += `<ul>${ warnings.map( ( w ) => `<li>⚠ ${ escapeHtml( w ) }</li>` ).join( '' ) }</ul>`;
+			}
+			showNotice( warnings.length ? 'warning' : 'success', html );
 		} catch ( error ) {
 			const messages = error.additional_errors
 				? [ error.message, ...error.additional_errors.map( ( e ) => e.message ) ]

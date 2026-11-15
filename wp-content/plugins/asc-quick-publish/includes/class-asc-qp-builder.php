@@ -298,6 +298,8 @@ final class ASC_QP_Builder {
 			return new WP_Error( 'asc_qp_create_failed', 'Could not create the product: ' . $e->getMessage(), array( 'status' => 500 ) );
 		}
 
+		$warnings = ASC_QP_Seo::apply( $product_id, $d );
+
 		/**
 		 * Fires after Quick Publish has created a draft product.
 		 *
@@ -310,6 +312,7 @@ final class ASC_QP_Builder {
 			'id'       => $product_id,
 			'title'    => $title,
 			'edit_url' => get_edit_post_link( $product_id, 'raw' ),
+			'warnings' => $warnings,
 		);
 	}
 
