@@ -1,0 +1,48 @@
+.asc-qp .form-table th {
+	width: 180px;
+}
+
+.asc-qp-fitment {
+	max-width: 640px;
+}
+
+.asc-qp-fitment input.asc-qp-model {
+	width: 180px;
+}
+
+.asc-qp-new-badge {
+	margin-left: 6px;
+	padding: 1px 6px;
+	border-radius: 3px;
+	background: #fcf0d0;
+	color: #7a5a00;
+	font-size: 11px;
+}
+
+.asc-qp-thumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 8px;
+}
+
+.asc-qp-thumbs img {
+	width: 72px;
+	height: 72px;
+	object-fit: cover;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+}
+
+.asc-qp-dimensions input {
+	width: 64px;
+}
+
+#asc-qp-title-preview {
+	white-space: normal;
+}
+
+.asc-qp .submit .spinner {
+	float: none;
+	vertical-align: middle;
+}

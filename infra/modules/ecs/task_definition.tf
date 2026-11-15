@@ -94,6 +94,8 @@ resource "aws_ecs_task_definition" "this" {
         [
           { name = "WORDPRESS_DB_PASSWORD", valueFrom = "${var.db_password_secret_arn}:password::" },
           { name = "WP_ADMIN_PASSWORD", valueFrom = "${aws_secretsmanager_secret.wp_admin.arn}:password::" },
+          # Whole secret string (not JSON), so no ":key::" suffix.
+          { name = "ANTHROPIC_API_KEY", valueFrom = aws_secretsmanager_secret.anthropic_api_key.arn },
         ],
         [for n in local.wordpress_salt_names : {
           name      = "WORDPRESS_${n}"

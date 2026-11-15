@@ -12,6 +12,8 @@ wp-content/cache
 
 # Installed by composer inside the build, not copied from the host
 wp-content/plugins
+# ...except our own plugin, which lives in this repo (not in composer)
+!wp-content/plugins/asc-quick-publish
 wp-content/themes
 wp-content/mu-plugins
 vendor

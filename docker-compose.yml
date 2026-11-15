@@ -34,6 +34,8 @@ services:
       WP_SITE_TITLE: ${WP_SITE_TITLE}
       WP_ACTIVATE_PLUGINS: ${WP_ACTIVATE_PLUGINS}
       WP_ACTIVATE_THEME: ${WP_ACTIVATE_THEME:-blocksy}
+      # Claude API key for ASC Quick Publish "Generate with AI" (set it in .env)
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     volumes:
       - uploads:/var/www/html/wp-content/uploads
     # 与 ECS 一致：wp-bootstrap.sh 完成后才报告健康，nginx 随后才启动
